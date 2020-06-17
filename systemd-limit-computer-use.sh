@@ -3,9 +3,12 @@ config=/etc/default/computer-use-disabled-hours.config
 
 SYSTEM_SHUTDOWN_AT="23:00"
 SYSTEM_USED_ALLOW_FROM="05:00"
+TIMEOUT="15m"
+TIMEOUT_MS=$((15*60*1000))
 
-if [ -e $config ]; then
-	source config
+if [ -e $config ]
+then
+	source $config
 fi
 
 TS_SAVE="/tmp/systemd-computer-start-time.config"
@@ -22,23 +25,24 @@ fi
 
 TS_NOW=$(date +"%s")
 
-func_get_str_date_from_epoch()
-{
+func_get_str_date_from_epoch() {
 	date +"%H:%M %d.%m.%Y" -d "@$1"
 }
 
-DATE_TS_TODAY=$(func_get_str_date_from_epoch($TS_SHUTDOWN_AT))
-DATE_TS_NEXTDAY=$(func_get_str_date_from_epoch($TS_SYSTEM_USED_ALLOW_FROM))
+DATE_TS_TODAY=$(func_get_str_date_from_epoch $TS_SHUTDOWN_AT)
+DATE_TS_NEXTDAY=$(func_get_str_date_from_epoch $TS_SYSTEM_USED_ALLOW_FROM)
 
 if [ $TS_NOW -gt $TS_SHUTDOWN_AT -a $TS_NOW -lt $TS_SYSTEM_USED_ALLOW_FROM ]
 then
-msg="shutdown at $DATE_TS_TODAY today and computer is not usable until $DATE_TS_NEXTDAY next day"
+	msg="shutdown at $DATE_TS_TODAY today and computer is not usable until $DATE_TS_NEXTDAY next day"
 
-	notify-send "Shutting down in $TIMEOUT"  "$msg"
+	notify-send -t $TIMEOUT_MS "Shutting down in $TIMEOUT !!"  "$msg"
 	logger -s -t "$msg"
-	shutdown -Pf now "$msg"
-else
-	logger -s -t "use of computer" "Computer use allowed."
+	shutdown -Pf $TIMEOUT "$msg"
+	while true
+	do
+		sleep 10
+	done
 fi
 
 #fail tp restart by systemd
