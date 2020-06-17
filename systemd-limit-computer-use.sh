@@ -3,8 +3,8 @@ config=/etc/default/computer-use-disabled-hours.config
 
 SYSTEM_SHUTDOWN_AT="23:00"
 SYSTEM_USED_ALLOW_FROM="05:00"
-TIMEOUT="15m"
-TIMEOUT_MS=$((15*60*1000))
+TIMEOUT_SECS=15
+TIMEOUT_MS=$((${TIMEOUT_SECS}*1000))
 
 if [ -e $config ]
 then
@@ -38,7 +38,7 @@ then
 
 	notify-send -t $TIMEOUT_MS "Shutting down in $TIMEOUT !!"  "$msg"
 	logger -s -t "$msg"
-	shutdown -Pf $TIMEOUT "$msg"
+	shutdown -Pf +$TIMEOUT "$msg"
 	while true
 	do
 		sleep 10
