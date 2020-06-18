@@ -13,7 +13,7 @@ Description=Allow computer use
 Type=simple
 ExecStart=/usr/local/bin/systemd-limit-computer-use.sh
 Restart=always
-RestartSec=15m
+RestartSec=15s
 
 [Install]
 WantedBy=multi-user.target
