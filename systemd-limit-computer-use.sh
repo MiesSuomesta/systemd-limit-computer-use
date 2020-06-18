@@ -62,12 +62,13 @@ if [ $YEA -gt 0 ]
 then
 	TO=$((${TS_NOW} + ${TIMEOUT_SEC}))
 	DATE_TS_SD=$(func_get_str_date_from_epoch $TO)
-	msg="Shutdown at ${DATE_TS_SD}. Computer is not nusable until $DATE_TS_NEXTDAY next day"
+	msgA="Shutdown at ${DATE_TS_SD}. Computer is not usable until $DATE_TS_NEXTDAY next day"
+	msgB="\nCancel shutdown via: shutdown -c"
 
-	notify-send -a "Sleep rythm enforcer" -t $TIMEOUT_MS "Shutting down in ${TIMEOUT_MINUTES} minutes."  "$msg"
-	logger -t "Sleep rythm enforcer" "$msg"
+	notify-send -a "Sleep rythm enforcer" -t $TIMEOUT_MS "Shutting down in ${TIMEOUT_MINUTES} minutes."  "${msgA}${msgB}"
+	logger -t "Sleep rythm enforcer" "$msgA"
 	rm $TS_SAVE
-	shutdown -Pf "+$TIMEOUT_MINUTES" "$msg"
+	shutdown -Pf "+$TIMEOUT_MINUTES" "$msgA"
 fi
 
 #fail tp restart by systemd
